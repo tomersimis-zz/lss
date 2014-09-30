@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block js %}
+<script type="text/javascript" src="static/js/plugins/datepicker/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/datepicker/bootstrap-datetimepicker.pt-BR.js"></script>
+
+<script type="text/javascript">
+    
+$(document).ready(function(){
+    $("#start").datetimepicker({
+        format: "dd MM yyyy - hh:ii",
+        autoclose: true,
+        todayBtn: true,
+        minuteStep: 10,
+
+    });
+    $("#end").datetimepicker({
+        format: "dd MM yyyy - hh:ii",
+        autoclose: true,
+        todayBtn: true,
+        minuteStep: 10,
+
+    });
+
+    $(".create-list").click(function(){
+        $("#list-id").val("-1")
+        $("#create-list").modal()
+    })
+
+
+    $(".edit-list").click(function(){
+        $("#list-id").val($(this).data('id'))
+        row = $(this).parent().parent()
+        $("#name").val(row.find("td:nth-child(1)").html())
+        $("#questions").val(row.find("td:nth-child(2)").html())
+        $("#start").val(row.find("td:nth-child(3)").html())
+        $("#end").val(row.find("td:nth-child(4)").html())
+        $("#create-list").modal()
+    })
+
+})
+
+</script>
+
+{% endblock %}
+
+{% block css %} 
+<link rel="stylesheet" type="text/css" href="static/css/datepicker/bootstrap-datetimepicker.min.css" />
+{% endblock %}
+
+{% block content %}
+<section class="content-header">
+                    <h1>
+                        Configuração de listas
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="#">Listas</a></li>
+                    </ol>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+
+                    
+                    <div class="row" style="margin-bottom: 20px">
+                        <div class="col-xs-12">
+                            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#create-list">Criar lista</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Listas cadastradas</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-hover">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Questões</th>
+                                            <th>Data de início</th>
+                                            <th>Data de término</th>
+                                            <th>Status</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                        {% for list in lists %}
+                                        <tr>
+                                            <td class="valign">{{ list.name }}</td>
+                                            <td class="valign">{{ list.questions }}</td>
+                                            <td class="valign">{{ list.start|date:"d F Y - H:i" }}</td>
+                                            <td class="valign">{{ list.end|date:"d F Y - H:i"  }}</td>
+                                            <td class="valign">
+                                                {% if list.status == 0 %}
+                                                    <span class="label label-info">Não iniciada</span>
+                                                {% endif %}
+
+                                                {% if list.status == 1 %}
+                                                    <span class="label label-success">Aberta</span>
+                                                {% endif %}
+
+                                                {% if list.status == 2 %}
+                                                    <span class="label label-danger">Finalizada</span>
+                                                {% endif %}
+                                            </td>
+                                            <td><a href="#" class="btn btn-primary edit-list" data-id="{{ list.key.id }}">Editar</a>
+                                            <a href="/submissoes?id={{ list.key.id }}" class="btn btn-primary">Submissões</a></td>
+                                        </tr>
+
+                                        {% empty %}
+                                        <tr>
+                                            <td>Nenhuma lista disponivel</td>
+                                        </tr>
+                                        {% endfor %}
+                                       
+                                    </table>
+                                </div><!-- /.box-body -->
+                            </div><!-- /.box -->
+                        </div>
+                    </div>
+
+
+                </section><!-- /.content -->
+
+
+<div class="modal fade" id="create-list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Criar/Editar lista</h4>
+      </div>
+      <form method="POST" action="/listas">
+      <div class="modal-body">
+
+      <input type="text" name="id" id="list-id" value="-1" style="display: none" />
+
+    <div class="row">
+        <div class="form-group col-md-8">
+            <label>Nome da lista</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Ex: Lista 1">
+        </div>
+
+        <div class="form-group col-md-4">
+            <label>Número de questões</label>
+            <input type="number" name="questions" id="questions" class="form-control">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label>Data de início</label>
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="fa fa-clock-o"></i>
+                </div>
+                <input type="text" class="form-control pull-right" name="start" id="start"/>
+            </div><!-- /.input group -->
+        </div><!-- /.form group -->
+
+        <div class="form-group col-md-6">
+            <label>Data de fim</label>
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="fa fa-clock-o"></i>
+                </div>
+                <input type="text" class="form-control pull-right" name="end" id="end"/>
+            </div><!-- /.input group -->
+        </div><!-- /.form group -->
+    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<section class="content-header">
+                    <h1>
+                        Submissões da {{ list.name }}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="#">Submissões</a></li>
+                    </ol>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+
+                
+                    {% for student in students %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">{{ student.login }}</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-hover group">
+                                        <tr>
+                                            <th>Questão</th>
+                                            <th>Submetido em</th>
+                                            <th></th>
+                                        </tr>
+
+                                            {% for sub in student.submissions %}
+
+                                                <tr>
+                                                    <td class="valign">Questão {{ sub.question }}</td>
+                                                    <td>{{ sub.date|date:"d F Y - H:i" }}</td>
+                                                    <td><a href="/download?id={{ sub.key.id }}" class="btn btn-primary edit-list" data-id="">Baixar</a></td>
+                                                </tr>
+
+
+                                            {% endfor %}
+
+                                        
+                                       
+                                    </table>
+                                </div><!-- /.box-body -->
+                            </div><!-- /.box -->
+                        </div>
+                    </div>
+                    {% endfor %}
+
+
+                </section><!-- /.content -->
+
+
+{% endblock %}

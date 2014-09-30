@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block js %}
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    $('.user-toggle').click(function(){
+        user_id = $(this).data('id')
+        label = $(this).parent().parent().find('.label')
+        console.log(label)
+        $.post( "/alunos", {
+            'user_id' : user_id
+        },
+            function( data ) {
+                if(data.success){
+                    if(data.accepted){
+                        label.removeClass('label-danger');
+                        label.addClass('label-success')
+                        label.html("Desbloqueado")
+                    }else{
+                        label.addClass('label-danger');
+                        label.removeClass('label-success')
+                        label.html("Bloqueado")
+                    }
+                }
+            });
+    })
+
+})
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<section class="content-header">
+                    <h1>
+                        Usuários
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="#">Usuários</a></li>
+                    </ol>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+
+
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="box">
+
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-hover valign">
+                                        <tr>
+                                            <th>Login</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Ação</th>
+                                        </tr>
+
+                                        {% for user in users %}
+                                        <tr>
+                                            <td class="valign">{{ user.login }}</td>
+                                            <td class="valign">{{ user.email }}</td>
+                                            <td class="valign">
+                                                {% if user.accepted %}
+                                                    <span class="label label-success">Desbloqueado</span>
+                                                {% else %}
+                                                    <span class="label label-danger">Bloqueado</span>
+                                                {% endif %}
+                                            </td class="valign">
+                                            <td><a href="#" class="btn btn-primary user-toggle" data-id="{{ user.user_id }}">Desbloquear</a></td>
+                                           
+                                        </tr>
+
+                                        {% endfor %}
+                                   
+                                    </table>
+                                </div><!-- /.box-body -->
+                            </div><!-- /.box -->
+                        </div>
+                    </div>
+
+
+                </section><!-- /.content -->
+
+{% endblock %}
